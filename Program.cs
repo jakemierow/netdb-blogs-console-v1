@@ -20,9 +20,15 @@ namespace BlogsConsole
                 {
                     Console.WriteLine("\n");
                     Console.WriteLine("1.) Create blog");
-                    Console.WriteLine("2. Add Post to blog");
+                    Console.WriteLine("2.) Add Post to blog");
                     Console.WriteLine("3.) Display all blogs");
                     Console.WriteLine("4.) Display Posts");
+                    Console.WriteLine("5.) Edit Post");
+                    Console.WriteLine("6.) Delete Post");
+                    Console.WriteLine("7.) Edit Blog");
+                    Console.WriteLine("8.) Delete Blog");
+
+
                     choice = Console.ReadLine();
                     if (choice == "1")
                     {
@@ -49,7 +55,8 @@ namespace BlogsConsole
 
 
                     }
-                    else if (choice == "2")
+
+                      else if (choice == "2")
                     {
                         var db = new BloggingContext();
                         var query = db.Blogs.OrderBy(b => b.BlogId);
@@ -73,10 +80,10 @@ namespace BlogsConsole
                                 db.SaveChanges();
                                 logger.Info("Post added - {Title}", post.Title);
 
-                                Console.WriteLine("Here are the posts");
+                                Console.WriteLine("Here are the posts:");
                                 foreach (var item in db.Posts)
                                 {
-                                    Console.WriteLine(item.Title);
+                                    Console.WriteLine($"title: {item.Title}; content: {item.Content}");
                                 }
 
                             }
@@ -132,7 +139,7 @@ namespace BlogsConsole
                             {
                                 Posts = db.Posts.OrderBy(p => p.Title);
 
-                                if(BlogId == 0)
+                                if (BlogId == 0)
                                 {
                                     Posts = db.Posts.OrderBy(p => p.Title);
                                 }
@@ -140,26 +147,124 @@ namespace BlogsConsole
                                 {
                                     Posts = db.Posts.Where(p => p.BlogId == BlogId).OrderBy(p => p.Title);
                                 }
-                                Console.WriteLine($"{Posts.Count()} post(s) returned");
+                                Console.WriteLine($"{Posts.Count()} post(s) returned:");
                                 foreach (var item in Posts)
                                 {
                                     Console.WriteLine($"Blog: {item.Blog.Name}\nTitle: {item.Title}\nContent: {item.Content}\n");
                                 }
                             }
-                             
+
                         }
                         else
                         {
                             logger.Error("Invalid Blog Id");
                         }
+
+
                     }
-              
-               
-         
+
+                    else if (choice == "5")
+                    {
+                        var db = new BloggingContext();
+                        var query = db.Blogs.OrderBy(b => b.Name);
+
+                        Console.WriteLine("Enter a post name");
+                        var postChoice = Console.ReadLine();
+                        var post = db.Posts.FirstOrDefault(p => p.Title == postChoice);
+
+                        Console.WriteLine("Enter new post content");
+                        var newContent = Console.ReadLine();
+
+                        post.Content = newContent;
+                        db.SaveChanges();
+
+
+                        Console.WriteLine("Here are the posts:");
+                        foreach (var item in db.Posts)
+                        {
+                            Console.WriteLine($"title: {item.Title}; content: {item.Content}");
+                        }
+
+
+                    }
+
+
+
+                    else if (choice == "6")
+                    {
+                        var db = new BloggingContext();
+                        var query = db.Blogs.OrderBy(b => b.Name);
+
+                        Console.Write("Enter a Post name: ");
+                        var postToDelete = Console.ReadLine();
+                        var deletePost = db.Posts.FirstOrDefault(p => p.Title == postToDelete);
+
+                        db.Posts.Remove(deletePost);
+                        db.SaveChanges();
+
+
+                        Console.WriteLine("Here are the posts:");
+                        foreach (var item in db.Posts)
+                        {
+                            Console.WriteLine($"title: {item.Title}; content: {item.Content}");
+                        }
+
+
+                    }
+
+                    else if (choice == "7")
+                    {
+                        var db = new BloggingContext();
+                        var query = db.Blogs.OrderBy(b => b.Name);
+
+                        Console.WriteLine("Enter a blog name");
+                        var blogChoice = Console.ReadLine();
+                        var blog = db.Blogs.FirstOrDefault(b => b.Name == blogChoice);
+
+                        Console.WriteLine("Enter new blog title");
+                        var newBlogTitle = Console.ReadLine();
+
+                        blog.Name = newBlogTitle;
+                        db.SaveChanges();
+
+
+                        Console.WriteLine("Here are the blogs");
+                        foreach (var item in db.Blogs)
+                        {
+                            Console.WriteLine(item.Name);
+                        }
+                    }
+
+
+                    else if(choice == "8")
+                    {
+                        var db = new BloggingContext();
+                        var query = db.Blogs.OrderBy(b => b.Name);
+
+                        Console.Write("Enter a blog name: ");
+                        var blogToDelete = Console.ReadLine();
+                        var deleteBlog = db.Blogs.FirstOrDefault(b => b.Name == blogToDelete);
+                        
+
+                        db.Blogs.Remove(deleteBlog);
+   
+                        db.SaveChanges();
+
+
+                        Console.WriteLine("Here are the blogs");
+                        foreach (var item in db.Blogs)
+                        {
+                            Console.WriteLine(item.Name);
+                        }
+
+                    }
+
 
 
                 }
-                while (choice == "1" || choice == "2" || choice == "3" || choice == "4");
+                while (choice == "1" || choice == "2" || choice == "3" || choice == "4" || choice == "5" || choice =="6" || choice == "7" || choice == "8");
+
+
             }
             catch (Exception ex)
             {
